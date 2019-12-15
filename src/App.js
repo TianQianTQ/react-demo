@@ -10,7 +10,7 @@ function App() {
         <Col span={12}>col-12</Col>
         <Col span={12}>col-12</Col>
       </Row>
-      <Button>Button</Button>
+      <Button type="primary">Button</Button>
     </div>
   );
 }

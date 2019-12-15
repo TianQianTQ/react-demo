@@ -49,8 +49,8 @@ const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
-const lessRegex = /.less/ 
-const lessModuleRegex = /.module.less$/
+const lessRegex = /.less/;
+const lessModuleRegex = /.module.less$/;
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
@@ -121,20 +121,34 @@ module.exports = function(webpackEnv) {
       },
     ].filter(Boolean);
     if (preProcessor) {
-      loaders.push(
-        {
-          loader: require.resolve('resolve-url-loader'),
-          options: {
-            sourceMap: isEnvProduction && shouldUseSourceMap,
-          },
-        },
-        {
+      if (preProcessor === 'less-loader') {
+        loaders.push({
           loader: require.resolve(preProcessor),
           options: {
-            sourceMap: true,
+            sourceMap: isEnvProduction && shouldUseSourceMap,
+            modules: false,
+            modifyVars: {
+              "@primary-color": "#008080"
+            },
+            javascriptEnabled: true,
           },
-        }
-      );
+        });
+      } else {
+        loaders.push(
+          {
+            loader: require.resolve('resolve-url-loader'),
+            options: {
+              sourceMap: isEnvProduction && shouldUseSourceMap,
+            },
+          },
+          {
+            loader: require.resolve(preProcessor),
+            options: {
+              sourceMap: true,
+            },
+          }
+        );
+      }
     }
     return loaders;
   };
@@ -399,7 +413,7 @@ module.exports = function(webpackEnv) {
                   ["import", {
                     "libraryName": "antd",
                     "libraryDirectory": "es",
-                    "style": "css" // `style: true` 会加载 less 文件
+                    "style": true // `style: true` 会加载 less 文件
                   }]
                 ],
                 // This is a feature of `babel-loader` for webpack (not Babel itself).
